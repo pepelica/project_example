@@ -32,8 +32,9 @@ def main(quantile):
     print(args)
     
     #read ini file
-    config = configparser.ConfigParser()    
-    config.read('path.ini')
+    config = configparser.ConfigParser() 
+    ini_path = os.path.dirname(os.path.realpath(__file__))
+    config.read(ini_path + '\path.ini')
     eloe_path = config['PATH']['eloe_path']
     input_ini_path = config['PATH']['input_path']
     output_ini_path = config['PATH']['output_path']
@@ -50,7 +51,7 @@ def main(quantile):
         output_path = output_ini_path
 
     try:                                    
-        samples = os.listdir(input_path)    #проверка, что входной путь корректен
+        samples = os.listdir(input_path)   #проверка, что входной путь корректен
     except(FileNotFoundError):
         print('Please provide a command line parameter using --indir or -i or add input path to the path.ini file')
         return
@@ -96,7 +97,8 @@ def main(quantile):
             #читаем файл, если некорректен - преобразуем, сохраняем в новый файл
             #возвращает список геномных карточек
             records = fu.read_input_file(path, gbk_files+'\\normal.gbk') #read and modificate file for parsing
-            print(records)
+      
+
         except ValueError:
             print(sample + ' is empty')
                   
@@ -138,7 +140,6 @@ def main(quantile):
     #удаляет рабочую папку с gbk файлами и результатами eloe
     shutil.rmtree(output_path + '\\temp')
         
-
 
 
 main(quantile)

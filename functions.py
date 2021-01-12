@@ -78,23 +78,77 @@ def merge(records, path):
 
 #сюда попадаем, если файл не парсится; создается читаемая версия файла
 def modify_input_file(handle):
+    def removeTrailingZeros(line):
+        res=''
+        ss=line.split('.')
+        if len(ss)>1:
+            tmp = ss[1].strip()
+            tmprev = tmp[::-1]#reverse
+            #читаем дробную часть в обратном порядке
+            flag=True
+            resrev=''
+            for c in tmprev: 
+                if (c=='0') & flag:
+                    continue
+                else:
+                    flag=False
+                    resrev = resrev + str(c)
+            #если не было ничего кроме нулей после точке, как в примере
+            if resrev=='':
+                res='0'
+            else:
+                res=resrev[::-1]
+        return ss[0]+'.'+res
+
+
     new_handle = []
     new_line = ''
 
     for line in handle:
-#        print(line)
         new_line = line
-#        print(line)
         if 'LOCUS       ' in line:
+            if line.count('-')<2:
+                line = line.replace('\n', '       ')
             len_start = line.find('length_')+7
             len_end = line.find('_cov')
             lenght = line[len_start:len_end]
             indx = line.rfind(lenght)
-            new_line = line[:indx]+'\t'+line[indx:]
-            #new_line = line.replace('.', '\t')
-            if line.count('-')<2:
+            head2 = ' '+ line[indx:] # вторая половина заголовка, дальше понадобится
+            line = line[:indx]+head2
 
-                new_line = new_line.replace('\n', '\t')
+
+            if len(line.split()[1]) > 16:
+
+                line = line.replace("NODE", "N")
+                line = line.replace("length", "l")
+                line = line.replace("cov", "c")
+
+                head1 = 'LOCUS       ' + removeTrailingZeros(line.split()[1])
+                line = head1 + head2
+                #если и это не помогло, то убираем инфу о покрытии
+
+
+
+                if len(line.split()[1]) > 16:
+                    head1 = line.split("_c")[0]
+                    line = head1 + head2
+                    #если и это не помогло, то убираем инфу о длине
+
+                    if len(line.split()[1]) > 16:
+                        head = line.split("_l")[0]
+                        line = head1 + head2
+                        #если и это не помогло, то убираем разделители _ в названии
+
+
+                        if len(line.split()[1]) > 16:
+                            line = line.replace('_', '')
+
+                            if len(line.split()[1]) > 16:
+                                line = 'LOCUS       '+ line.split()[1][:16] + head2
+
+            new_line = line
+
+
 
         new_handle.append(new_line)
 
@@ -117,8 +171,8 @@ def read_input_file(path, new_handle_file):
         except:
             with open(path+'//'+ contents[0], "r") as handle:
                 new_handle = modify_input_file(handle)
-                with open(new_handle_file, 'w') as file:
-                    file.write(new_handle)
+                with open(new_handle_file, 'w') as myfile:
+                    myfile.write(new_handle)
 
 
             for record in SeqIO.parse(new_handle_file, "genbank"):
