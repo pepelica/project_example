@@ -195,16 +195,14 @@ def run_EloE(EloE_input_path, EloE_output_path, eloe_path):
          EloE_input_path, EloE_output_path],
         shell=True,
         stdout=PIPE, stderr=PIPE)
-    proc.wait()    # дождаться выполнения
-
     try:
-        proc.communicate(timeout=15)       
-        return True
-    except Popen.TimeoutExpired:
-        proc.kill()
-        return False
-    except:
+        proc.wait(timeout = 45)    # дождаться выполнения
 
+        #proc.communicate(timeout=15)       
+        return True
+
+    except:
+        proc.kill()
         return False
         
 
