@@ -218,13 +218,14 @@ def find_quantile(EloE_output_path, output, quantile):
             end = 0
             for i in range(quantile):
                 start = end
-                end = len(df)-round(len(df)/4*(quantile - 1-i))
+                end = len(df)-round(len(df)/quantile*(quantile - 1-i))
 #                df1 = df.iloc[round(i*len(df)/4):len(df)-round(len(df)/4*(quantile - 1-i)), :]
                 df1 = df.iloc[start:end, :]
-
+                print(df1)
                 df1.to_csv(f'{output}_quantile{i+1}.txt', sep = '\t', na_rep = '-')
-            break
 
+            break
+ррдридори
 
 
 
