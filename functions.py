@@ -225,7 +225,5 @@ def find_quantile(EloE_output_path, output, quantile):
                 df1.to_csv(f'{output}_quantile{i+1}.txt', sep = '\t', na_rep = '-')
 
             break
-ррдридори
-
 
 
