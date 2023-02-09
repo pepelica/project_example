@@ -44,20 +44,20 @@ def main(quantile):
     output_path = args.outdir
     quantile = args.quantiles
     
-    #если пути не введены в командную строку, берутся пути из ini файла
+    # if paths are not provided in command line, extract them from ini file
     if not input_path:
         input_path = input_ini_path
     if not output_path:
         output_path = output_ini_path
 
     try:                                    
-        samples = os.listdir(input_path)   #проверка, что входной путь корректен
+        samples = os.listdir(input_path)   # validate the existance of input path
     except(FileNotFoundError):
         print('Please provide a command line parameter using --indir or -i or add input path to the path.ini file')
         return
     
-    #удаляем все файлы в рабочей директории
-    try:                                    #проверка, что выходной путь корректен
+    # delete files in working directory
+    try:                                    # validate the existance of output path
         contents = os.listdir(output_path)
     except(FileNotFoundError):
         print('Please provide a command line parameter using --outdir or -o or add output path to the path.ini file')
@@ -72,7 +72,7 @@ def main(quantile):
             shutil.rmtree(output_path + '\\'+file)
             
     
-    #Создаем общую папку для результата подсчета кванитлей
+    # Generate the folder for quantiles
     quantile_output_path = output_path+'\\quantile\\'
      
     os.mkdir(quantile_output_path)
@@ -94,8 +94,7 @@ def main(quantile):
             
         try:
 
-            #читаем файл, если некорректен - преобразуем, сохраняем в новый файл
-            #возвращает список геномных карточек
+            #returns list of gbk files
             records = fu.read_input_file(path, gbk_files+'\\normal.gbk') #read and modificate file for parsing
       
 
@@ -106,25 +105,24 @@ def main(quantile):
             print(sample +' have incorrect file format')
         
         else:
-            #cклеиваем геномные карточки в одну, записываем в файл
+            # merge gbk files, record to file
             fu.merge(records, gbk_files+'\\merged.gbk') #merge records to one record 
 
                 
-            #если исправлялся некорректный файл - удаляем полученный файл
-            #(чтобы в папке, подаваемой елое был только один файл)
+            #keep only one (correct) file in the folder
             try:
                 os.remove(gbk_files+'\\normal.gbk')
             except:
                 print('file was not modified')
              
-            #создаем папку с результатами елое этого организма
+            # generate folder with the EloE results for an organism
             eloe_res_path = org_temp_res_path+'\\eloe\\'
             os.makedirs(eloe_res_path)
              
-            #запускаем елое, записываем результаты для организма
+            # run EloE
             eloe_res = fu.run_EloE(org_temp_res_path + '\\gbk', eloe_res_path, eloe_path)
             
-            #папка, куда записываются файлы с квантилями этого организма 
+            # find a quantile
             sample_quantile = quantile_output_path + '\\'+ sample+'\\'
             os.mkdir(sample_quantile) 
             if eloe_res:
@@ -137,7 +135,7 @@ def main(quantile):
        
 
     
-    #удаляет рабочую папку с gbk файлами и результатами eloe
+    # delete intermediate files
     shutil.rmtree(output_path + '\\temp')
         
 
