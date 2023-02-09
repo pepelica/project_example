@@ -11,6 +11,7 @@ import os
 
 
 def merge(records, path):
+    #have been taken from https://github.com/kblin/merge-gbk-records
     """Merge multiple SeqRecords into one, using a defined spacer
 
     :param records: Iterable containing SeqRecords to be merged
@@ -21,16 +22,12 @@ def merge(records, path):
     """
     length=20
     spacer='n'
-    ALL_FRAME_STOP_MOTIF = 'TAGCTAACTGACCGTCAGTTAGCTA'
 
     if not len(records):
         raise ValueError("No records given")
 
-    if spacer == 'stop':
-        spacer_seq = Seq(ALL_FRAME_STOP_MOTIF * 40 *
-                         length, Alphabet.generic_dna)
-    else:
-        spacer_seq = UnknownSeq(
+
+    spacer_seq = UnknownSeq(
             length * 1000, alphabet=Alphabet.generic_dna, character='N')
 
     new_rec = records[0]
@@ -76,7 +73,8 @@ def merge(records, path):
 
 
 
-#сюда попадаем, если файл не парсится; создается читаемая версия файла
+# if gbk file has incorrect format 
+# correction
 def modify_input_file(handle):
     def removeTrailingZeros(line):
         res=''
@@ -156,7 +154,7 @@ def modify_input_file(handle):
 
         
                 
-#считывает входной файл, если не парсится - отправляет на корректировку, пересохраняет и парсит, возвращает список геномных карточек образца                
+# read input file, correct if necessary                
 def read_input_file(path, new_handle_file):
 
     contents = os.listdir(path)
@@ -187,7 +185,7 @@ def read_input_file(path, new_handle_file):
                 records.append(record)
     return records
 
-#запускает программу eloe
+# run EloE
 def run_EloE(EloE_input_path, EloE_output_path, eloe_path):
 
     proc = Popen(
@@ -206,7 +204,7 @@ def run_EloE(EloE_input_path, EloE_output_path, eloe_path):
         return False
         
 
-#находит файл eei и разбивает его на заданное количество частей
+# open the file with elongation efficiency indices (eei) and split it into quantiles
 def find_quantile(EloE_output_path, output, quantile):
     EloEresults = os.listdir(EloE_output_path)
     for EloE_file in EloEresults:
