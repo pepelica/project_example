@@ -1,10 +1,9 @@
-Эта программа пропускает папки с аннотированными геномами через программу EloE, где для каждого образца белки ранжируются по уровню эффективности элонгации трансляции. 
-Полученный список делится на заданное число квантилей.
+This program preprocess folders with genomes and run the EloE program. For each sample the EloE generates files where the proteins are ranked according to the level of translation elongation efficiency. Then this script devides those lists into a given number of quantiles, outputing the potentially highly expressed genes.
 
-Перед запуском программы нужно внести путь до EloE в path.ini файл по образцу. 
-Также туда можно добавить: input_path - директория с папками для каждого образца, содержащими .gbk файлы (по одному файлу на образец).
- 			   output_path - пустая директория (перед запуском программы очищается), куда добавляются папки для каждого образца, содежащие разбиение генов по квантилям.
+Before starting the program, you need to enter the path to EloE in the path.ini file according to the sample.
+You can also add: input_path - a directory with folders for each sample containing .gbk files (one file per sample).
+  output_path - empty directory (cleared before starting the program), where folders are added for each sample, containing the splitting of genes by quantiles.
 
-Можно задать input_path через параметр командной строки -i(--indir) и output_path  через -o (--outdir) (обязательно, если они не были добавлены в path.ini файл). 
-Если какой-либо путь прописан и в коммандной строке, и в path.ini, задействуется только путь из коммандной строки.
-Также можно задать количество квантилей командой -q(--quantiles), значение по умолчанию - 4.
+You can set the input_path with the -i(--indir) command line option and the output_path with -o (--outdir) (mandatory if they weren't added to the path.ini file).
+If any path is specified in both the command line and path.ini, only the path from the command line is used.
+You can also set the number of quantiles with the -q(--quantiles) command, the default value is 4.
